@@ -69,6 +69,7 @@ const createHTMLElement = (data) => {
 	if(data.click) element.addEventListener('click', data.click)
     if(data.blur) element.addEventListener('blur', data.blur)
 	if(data.focus) element.addEventListener('focus', data.focus)
+	if(data.change) element.addEventListener('change', data.change)
 	if(data.innerHTML) element.innerHTML = data.innerHTML
 	if(data.innerText) element.innerText = data.innerText
 	if(data.attribute) element.setAttribute(data.attribute.key, data.attribute.value)

@@ -732,6 +732,7 @@ header{
   #purchaseDatePicker{
     width: 30rem;
     border-width: 0 0 1px 0;
+    font-size: 18px;
   }
 
   #purchaseDatePicker:focus{
@@ -866,4 +867,12 @@ header{
 .lineItemWrapper input:focus{
     outline-color: rgb(54,99,188);
     outline-width: 1px;
+}
+
+.lineItemWrapper .lineItemTaxable *{
+    justify-content: unset;
+}
+
+.lineItemWrapper .lineItemRecurring *{
+    justify-content: unset;
 }

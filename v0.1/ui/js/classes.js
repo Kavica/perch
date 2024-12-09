@@ -667,12 +667,6 @@ class PurchaseForm{
         const three = new LineItem()
         children.push(three.HTMLElement)
 
-        const four = new LineItem()
-        children.push(four.HTMLElement)
-
-        const five = new LineItem()
-        children.push(five.HTMLElement)
-
         const html = {
             type: 'div',
             class: 'purchaseFormSection shadow',
@@ -806,15 +800,58 @@ class PurchaseForm{
 
 let lineItemCount = 0
 const taxRate = .0788
+const lineItemsUUIDs = []
 
 class LineItem{
     constructor(){
         this._UUID = createUUID(this)
+        lineItemsUUIDs.push(this._UUID)
+
+        this._taxableToggle = null
+        this._priceInput = null
+        this._quantityInput = null
+        this._subtotal = null
+        this._salesTax = null
+        this._lineTotal = null
+        this._total = null
+
+
         this._html = this.createHTML()
+
+        
+
+        
     }
 
     get HTMLElement(){
         return this._html
+    }
+
+    get lineTotal(){
+        this.calculateTotal()
+        return this._total
+    }
+
+    calculateTotal(){
+        let tax = this._taxableToggle.value ? taxRate : 0.00
+        if(this._quantityInput.value == 0 || this._priceInput.value == 0){
+            this._subtotal.innerText = '$0.00'
+            this._salesTax.innerText = '$0.00'
+            this._lineTotal.innerText = '$0.00'
+            this._total = 0
+            return
+        }
+        let subtotal = this._quantityInput.value * this._priceInput.value
+        let salesTax = subtotal * tax
+        let lineTotal = subtotal + salesTax
+        this._subtotal.innerText = `$${subtotal.toFixed(2)}`
+        this._salesTax.innerText = `$${salesTax.toFixed(2)}`
+        this._lineTotal.innerText = `$${lineTotal.toFixed(2)}`
+        this._total = lineTotal
+    }
+
+    runGlobalTotals(){
+        updateLineItems()
     }
 
     createHTML(){
@@ -827,9 +864,6 @@ class LineItem{
             innerText: `${lineItemCount}`
         }))
         children.push(divider())
-        // const description = new Util_Input('', 'itemDescription', null, null)
-        // // inputs.push(purchaseRequestorInput.uuid)
-        // children.push(description.HTMLElement)
 
         children.push(createHTMLElement({
             type: 'input',
@@ -863,9 +897,25 @@ class LineItem{
         }))
         children.push(divider())
 
+        // children.push(createHTMLElement({
+        //     type: 'div', 
+        //     class: 'lineItemTaxable'
+        // }))
+        const taxableToggleSettings = {
+            "wrapper": {
+                "active": 'rgb(54,99,188)',
+                "inactive": 'rgb(153, 155, 159)'
+            },
+            "thumb": {
+                "color": 'rgb(255,255,255)'
+            }
+        }
+
+        this._taxableToggle = new Util_Toggle(true, taxableToggleSettings, updateLineItems)
         children.push(createHTMLElement({
             type: 'div', 
-            class: 'lineItemTaxable'
+            class: 'lineItemTaxable',
+            child: this._taxableToggle.HTMLElement
         }))
         children.push(divider())
 
@@ -888,15 +938,22 @@ class LineItem{
                 {
                     key: 'step',
                     value: 1
+                },
+                {
+                    key: 'parent-UUID',
+                    value: this._UUID
                 }
-            ]
+            ],
+            "change": function (){
+                globalObjects[this.getAttribute('parent-UUID')].runGlobalTotals()
+            }
         }
-        const quantityInput = createHTMLElement(quantityInputHTML)
-        quantityInput.value = 1
-        children.push(quantityInput)
+        this._quantityInput = createHTMLElement(quantityInputHTML)
+        this._quantityInput.value = 1
+        children.push(this._quantityInput)
         children.push(divider())
 
-        children.push(createHTMLElement({
+        this._priceInput = createHTMLElement({
             type: 'input',
             class: 'lineItemPrice',
             attributes: [
@@ -915,32 +972,62 @@ class LineItem{
                 {
                     key: 'step',
                     value: 0.01
+                },
+                {
+                    key: 'parent-UUID',
+                    value: this._UUID
                 }
-            ]
-        }))
+            ],
+            "change": function (){
+                globalObjects[this.getAttribute('parent-UUID')].runGlobalTotals()
+            }
+        })
+        children.push(this._priceInput)
         children.push(divider())
 
-        children.push(createHTMLElement({
+        this._subtotal = createHTMLElement({
             type: 'div', 
             class: 'lineItemSubtotal'
-        }))
+        })
+        children.push(this._subtotal)
         children.push(divider())
 
-        children.push(createHTMLElement({
+        this._salesTax = createHTMLElement({
             type: 'div', 
             class: 'lineItemSalesTax'
-        }))
+        })
+        children.push(this._salesTax)
         children.push(divider())
 
-        children.push(createHTMLElement({
+        this._lineTotal = createHTMLElement({
             type: 'div', 
             class: 'lineItemLineTotal'
-        }))
+        })
+        children.push(this._lineTotal)
         children.push(divider())
+
+        // children.push(createHTMLElement({
+        //     type: 'div', 
+        //     class: 'lineItemRecurring'
+        // }))
+        // children.push(divider())
+
+
+        const recurringToggleSettings = {
+            "wrapper": {
+                "active": 'rgb(54,99,188)',
+                "inactive": 'rgb(153, 155, 159)'
+            },
+            "thumb": {
+                "color": 'rgb(255,255,255)'
+            }
+        }
+        const recurringToggle = new Util_Toggle(true, recurringToggleSettings, null)
 
         children.push(createHTMLElement({
             type: 'div', 
-            class: 'lineItemRecurring'
+            class: 'lineItemRecurring',
+            child: recurringToggle.HTMLElement
         }))
         children.push(divider())
 

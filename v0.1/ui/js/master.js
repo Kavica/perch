@@ -168,5 +168,14 @@ const divider = () =>{
 const getCenterWidth = () =>{
     return document.querySelector('#content').offsetWidth
 }
+
+const updateLineItems = () =>{
+    let runningTotal = 0
+    let totalSpan = document.querySelector('#estimatedCost')
+    for(let line of lineItemsUUIDs){
+        runningTotal += globalObjects[line].lineTotal
+    }
+    totalSpan.innerText = `$${runningTotal.toFixed(2)}`
+}
  
 window.addEventListener("DOMContentLoaded", init, true)
