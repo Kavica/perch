@@ -1,0 +1,48 @@
+https://csa-web4/web/flow/v0.2/json/purchases.php
+
+[
+    {
+        "id":"1",
+        "title":"MyTitle"
+    }
+]
+
+{
+    "id":"1",
+    "title":"MyTitle"
+}
+
+
+{
+    "purchaseId":"1",
+    "purchaseTypeId":"1",
+    "divisionId":"1",
+    "paymentTypeId":"1",
+    "purchaseOrderId":"1",
+    "statusId":"1",
+    "fiscalYear":"24/25",
+    "stateAPD":"12-34-5678-9123",
+    "title":"AV Software",
+    "description":"This software is for desktop Mac equipment.",
+    "totalCost":"7123.45",
+    "creditCard":"0",
+    "requesterESN":"103514",
+    "purchaseDate":"2024-08-09",
+    "statusDate":"2024-08-10",
+    "ssid":"0",
+    "ts":"2024-08-08 08:37:18"
+}
+
+
+controlNumber
+//fiscalYear
+//purchaseDate (wrong format)
+//purchaseDivision (needs to be divisionId)
+//purchaseOrder (needs to be purchaseOrderId)
+//purchaseOtherInfo (does not exist)
+//purchaseRequestor (does not exist)
+purchaseSubDivision
+//purchaseTitle (needs to be title)
+purchaseType
+purchaseVendor
+//stateAPDNumber (needs to be stateAPD)

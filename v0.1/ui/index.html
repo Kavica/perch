@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>PERCH</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		<link href=../../utilities.css rel=stylesheet type=text/css>
+		<link href=css/customProperties.css rel=stylesheet type=text/css>
+		<link href=css/master.css rel=stylesheet type=text/css>
+	</head>
+	<body>
+		<main>
+			<div id="leftSidebarContainer">
+				<svg class="flt_svg" xmlns="http://www.w3.org/2000/svg">
+					<defs>
+						<filter id="flt_tag">
+							<feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />    
+							<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="flt_tag" />
+							<feComposite in="SourceGraphic" in2="flt_tag" operator="atop"/>
+						</filter>
+					</defs>
+				</svg>
+				<div id="leftSidebarBackground">
+					<div id="leftSidebar">
+						<div id="appName"></div>
+						<div id="menuSections">
+							<div class="menuSection">
+								<div class="menuItem" selected="true">
+									<div id='menuDashboard' class="menuIcon"></div>
+									<div class="menuName">Dashboard</div>
+								</div>
+								<div class="menuItem">
+									<div id='menuNotifications' class="menuIcon"></div>
+									<div class="menuName">Notifications</div>
+								</div>
+								<div class="menuItem">
+									<div id='menuContinue' class="menuIcon"></div>
+									<div class="menuName">Continue</div>
+								</div>
+							</div>
+							<div class="menuSection">
+								<div class="menuItem">
+									<div id='menuSettings' class="menuIcon"></div>
+									<div class="menuName">Settings</div>
+								</div>
+							</div>
+						</div>
+						<div id="version">Version 0.2.0</div>
+					</div>
+				</div>
+			</div>
+			<div id="center">
+				<header>
+					<div id="location">Dashboard</div>
+					<div id="mainSearchWrapper">
+						<div id="searchIcon"></div>
+						<input type="text" placeholder="Search...">
+					</div>
+				</header>
+				<div id="content"></div>
+			</div>
+			<div id="dynamicMenu">
+				<div class="placeholder section">
+					<div class="dynamicSectionHeader">Placeholder</div>
+					<div class="wip"></div>
+				</div>
+				<div id="buttonsWrapper" class="section">
+					<div class="dynamicSectionHeader">Actions</div>
+					<div class="buttons">
+						<div class="button">Edit</div>
+						<div id='noteButton' class="button">Add Note</div>
+						<div class="button">Print</div>
+						<div id="saveButton" class="button">Save</div>
+						<div id='closeButton' class="button">Close</div>
+					</div>
+				</div>
+				<div class="placeholder section">
+					<div class="dynamicSectionHeader">Placeholder</div>
+					<div class="wip"></div>
+				</div>
+			</div>
+		</main>
+		<script type=text/javascript src=../../Dropdown.js></script>
+		<script type=text/javascript src=../../utilities.js></script>
+		<script type=text/javascript src=js/classes.js></script>
+		<script type=text/javascript src=js/tempDDFiller.js></script>
+		<script type=text/javascript src=js/requestPurchase.js></script>
+		<script type=text/javascript src=js/master.js></script>
+	</body>
+</html>
