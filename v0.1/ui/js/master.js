@@ -15,8 +15,28 @@ const init = async () =>{
 const addListeners = () =>{
     addLeftMenuListeners()
     addSaveButton()
-    // addNoteButton()
+    addNoteButton()
     addCloseButton()
+    tempAddOtherButtons()
+}
+
+const addNoteButton = () =>{
+    const noteButton = document.querySelector('#noteButton')
+    noteButton.addEventListener('click', startPurchaseNote)
+}
+
+const startPurchaseNote = () =>{
+    let note = new NotePopup()
+    note.show()
+    const purchaseRequestNoteArea = document.querySelector('#purchaseRequestNoteArea')
+    purchaseRequestNoteArea.focus()
+}
+
+const tempAddOtherButtons = () =>{
+    const editButton = document.querySelector('#editButton')
+    const printButton = document.querySelector('#printButton')
+    editButton.addEventListener('click', workInProgress)
+    printButton.addEventListener('click', workInProgress)
 }
 
 const addCloseButton = () =>{
@@ -126,7 +146,7 @@ const loadDashboard = () =>{
 const createPurchaseForm = () =>{
     leftSideBarNoneSelected()
     showDynamicMenu()
-    setLocation('New Purchase')
+    setLocation('Purchase Request')
     const content = document.querySelector('#content')
     content.innerHTML = null
 
@@ -176,6 +196,36 @@ const updateLineItems = () =>{
         runningTotal += globalObjects[line].lineTotal
     }
     totalSpan.innerText = `$${runningTotal.toFixed(2)}`
+}
+
+const addNewLineItem = () =>{
+    const lineItemsWrapper = document.querySelector('#lineItemsWrapper')
+    const newLine = new LineItem()
+    lineItemsWrapper.appendChild(newLine.HTMLElement)
+}
+
+const workInProgress = () =>{
+    const popup = new Util_Popup("In Development", 'This feature is still being worked on.', [{
+        "text": "OK",
+        "click": function(){
+            globalObjects[globalObjects[this.getAttribute('data-UUID')].parentPopup].hide()
+        }
+    }])
+    popup.show()
+}
+
+const notify = (message) =>{
+    const popup = new Util_Popup(null, message, [{
+        "text": "OK",
+        "click": function(){
+            globalObjects[globalObjects[this.getAttribute('data-UUID')].parentPopup].hide()
+        }
+    }])
+    popup.show()
+}
+
+const justATest = (test) =>{
+    console.log(test)
 }
  
 window.addEventListener("DOMContentLoaded", init, true)
