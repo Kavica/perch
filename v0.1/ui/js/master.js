@@ -224,8 +224,17 @@ const notify = (message) =>{
     popup.show()
 }
 
-const justATest = (test) =>{
-    console.log(test)
+const saveNote = (userNote) =>{
+    const currentTime = getFormattedDateAndTime()
+    const noteToBeAdded = new Note({
+        user: 'Steven Gross', 
+        note: userNote,
+        time: `${currentTime.time} ${currentTime.date}`
+
+    })
+    const notesWrapper = document.querySelector('#notesWrapper')
+    notesWrapper.appendChild(noteToBeAdded.HTMLElement)
+    notify('Your note has been added!')
 }
  
 window.addEventListener("DOMContentLoaded", init, true)

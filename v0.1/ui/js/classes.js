@@ -1140,6 +1140,8 @@ class NotePopup{
         this._save = {
             "text": "Save",
             "click": function(){
+                const note = globalObjects[globalObjects[this.getAttribute('data-UUID')].parentPopup].note
+                saveNote(note)
                 globalObjects[globalObjects[this.getAttribute('data-UUID')].parentPopup].hide()
             }
         }
@@ -1151,9 +1153,9 @@ class NotePopup{
         this._HTML = this.createHTML()
     }
 
-    // get associatedUUID(){
-    //     return this._associatedUUID
-    // }
+    get note(){
+        return this._textArea.value
+    }
 
     show(){
         const body = document.querySelector('body')
@@ -1249,5 +1251,87 @@ class NoteButton{
 
     get parentPopup(){
         return this._parentPopup
+    }
+}
+
+class NoteSection{
+    constructor(){
+        this._html = this.createNotesSection()
+    }
+
+    get HTMLElement(){
+        return this._html
+    }
+
+    createNotesSection(){
+        const children = []
+
+        children.push(this.createSectionTitle('Notes'))
+
+        children.push(createHTMLElement({
+            type: 'div',
+            id: 'notesWrapper'
+        }))
+
+        const html = {
+            type: 'div',
+            id: 'notesSection',
+            class: 'purchaseFormSection shadow',
+            children: children
+        }
+        return createHTMLElement(html)
+    }
+
+    createSectionTitle(title){
+        const html = {
+            type: 'div',
+            class: 'purchaseFormSectionTitle',
+            innerText: title
+        }
+
+        return createHTMLElement(html)
+    }
+}
+
+class Note{
+    constructor(data){
+        this._note = data.note
+        this._user = data.user
+        this._time = data.time
+        this._html = this.createHTML()
+    }
+
+    get HTMLElement(){
+        return this._html
+    }
+
+    createHTML(){
+        if(!document.querySelector('#notesSection')){
+            const noteSection = new NoteSection()
+            const purchaseFormWrapper = document.querySelectorAll('.purchaseFormWrapper')[0]
+            purchaseFormWrapper.appendChild(noteSection.HTMLElement)
+        }
+
+        const children = []
+
+        children.push(createHTMLElement({
+            type: 'div', 
+            class: 'theNote', 
+            innerText: this._note
+        }))
+
+        children.push(createHTMLElement({
+            type: 'div', 
+            class: 'theAuthor', 
+            innerText: `${this._user} ${this._time}`
+        }))
+
+        const html = {
+            type: 'div',
+            class: 'noteWrapper',
+            children: children
+        }
+
+        return createHTMLElement(html)
     }
 }

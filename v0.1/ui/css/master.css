@@ -910,3 +910,27 @@ header{
 #purchaseRequestNoteArea:focus{
     outline-color: rgb(54,99,188);
 }
+
+.noteWrapper{
+    width: 100%;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.theNote{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.theAuthor{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    font-style: italic;
+    font-size: 16px;
+    color: rgb(54,99,188);
+}
