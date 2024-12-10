@@ -659,19 +659,52 @@ class PurchaseForm{
         children.push(this.lineItemsHeaders())
 
         const initialLineItemRow = new LineItem()
-        children.push(initialLineItemRow.HTMLElement)
+        const lineItemsWrapperHTML = {
+            type: 'div',
+            id: 'lineItemsWrapper',
+            child: initialLineItemRow.HTMLElement
+        }
+        children.push(createHTMLElement(lineItemsWrapperHTML))
 
-        const two = new LineItem()
-        children.push(two.HTMLElement)
-
-        const three = new LineItem()
-        children.push(three.HTMLElement)
+        children.push(this.lineItemsButtons())
 
         const html = {
             type: 'div',
             class: 'purchaseFormSection shadow',
             children: children
         }
+        return createHTMLElement(html)
+    }
+
+    lineItemsButtons(){
+        const children = []
+
+        const removeLineHTML = {
+            type: 'div',
+            class: 'button',
+            innerText: 'Remove A Line',
+            'click': function (){
+                workInProgress()
+            }
+        }
+        children.push(createHTMLElement(removeLineHTML))
+
+        const addLineHTML = {
+            type: 'div',
+            class: 'button',
+            innerText: 'Add A Line',
+            'click': function (){
+                addNewLineItem()
+            }
+        }
+        children.push(createHTMLElement(addLineHTML))
+
+        const html = {
+            type: 'div',
+            id: 'lineItemsButtonWrapper',
+            children: children
+        }
+
         return createHTMLElement(html)
     }
 
@@ -815,6 +848,10 @@ class LineItem{
         this._lineTotal = null
         this._total = null
 
+        this._recurringToggle = null
+        this._startDate = null
+        this._endDate = null
+
 
         this._html = this.createHTML()
 
@@ -852,6 +889,16 @@ class LineItem{
 
     runGlobalTotals(){
         updateLineItems()
+    }
+
+    toggleRecurring(){
+        if(this._recurringToggle.value == true){
+            this._startDate.style.opacity = 1
+            this._endDate.style.opacity = 1
+        }else{
+            this._startDate.style.opacity = 0
+            this._endDate.style.opacity = 0
+        }
     }
 
     createHTML(){
@@ -1006,13 +1053,6 @@ class LineItem{
         children.push(this._lineTotal)
         children.push(divider())
 
-        // children.push(createHTMLElement({
-        //     type: 'div', 
-        //     class: 'lineItemRecurring'
-        // }))
-        // children.push(divider())
-
-
         const recurringToggleSettings = {
             "wrapper": {
                 "active": 'rgb(54,99,188)',
@@ -1022,12 +1062,12 @@ class LineItem{
                 "color": 'rgb(255,255,255)'
             }
         }
-        const recurringToggle = new Util_Toggle(true, recurringToggleSettings, null)
+        this._recurringToggle = new Util_Toggle(false, recurringToggleSettings, this.toggleRecurring.bind(this))
 
         children.push(createHTMLElement({
             type: 'div', 
             class: 'lineItemRecurring',
-            child: recurringToggle.HTMLElement
+            child: this._recurringToggle.HTMLElement
         }))
         children.push(divider())
 
@@ -1045,9 +1085,10 @@ class LineItem{
                     }
                 ]
         }
-        const startDate = createHTMLElement(startDateHTML)
-        startDate.valueAsDate = new Date()
-        children.push(startDate)
+        this._startDate = createHTMLElement(startDateHTML)
+        this._startDate.style.opacity = 0
+        this._startDate.valueAsDate = new Date()
+        children.push(this._startDate)
         children.push(divider())
 
         const endDateHTML = {
@@ -1064,13 +1105,15 @@ class LineItem{
                     }
                 ]
         }
-        const endDate = createHTMLElement(endDateHTML)
-        endDate.valueAsDate = new Date()
-        children.push(endDate)
+        this._endDate = createHTMLElement(endDateHTML)
+        this._endDate.style.opacity = 0
+        this._endDate.valueAsDate = new Date()
+        children.push(this._endDate)
 
         const html = {
             type: 'div',
             class: 'lineItemWrapper',
+            UUID: this._UUID,
             children: children
         }
 
@@ -1079,20 +1122,132 @@ class LineItem{
 
 }
 
-// optionChildren.push(createHTMLElement({
-//     type: 'input',
-//     attributes: [
-//         {
-//             key: 'type',
-//             value: 'radio'
-//         },
-//         {
-//             key:'name',
-//             value: name
-//         },
-//         {
-//             key: 'value',
-//             value: option
-//         }
-//     ]
-// }))
+class NotePopup{
+    // In order for this to work, the body element MUST have position set to relative
+    constructor(){
+        this._UUID = createUUID(this)
+        this._title = 'Add A Note To This Purchase Request'
+        this._textarea = null
+        // this._message = message
+        // this._associatedUUID = associatedUUID
+        this._discard = {
+            "text": "Discard",
+            "click": function(){
+                globalObjects[globalObjects[this.getAttribute('data-UUID')].parentPopup].hide()
+            }
+        }
+
+        this._save = {
+            "text": "Save",
+            "click": function(){
+                globalObjects[globalObjects[this.getAttribute('data-UUID')].parentPopup].hide()
+            }
+        }
+        
+
+
+
+        this._buttons = this.createPopupButtons([this._discard, this._save])
+        this._HTML = this.createHTML()
+    }
+
+    // get associatedUUID(){
+    //     return this._associatedUUID
+    // }
+
+    show(){
+        const body = document.querySelector('body')
+        body.appendChild(this._HTML)
+    }
+
+    hide(){
+        removeDomAndObjectReference(this._HTML, true)
+    }
+
+    createHTML(){
+        const HTML = {
+            "UUID": this._UUID,
+            "type": "div",
+            "class": "util-popupBackground",
+            child: this.createPopupContentHTML()
+        }
+        return createHTMLElement(HTML)
+    }
+
+    createPopupContentHTML(){
+        const popupChildren = []
+        if(this._title){
+            const titleHTML = {
+                "type": "div",
+                "class": "util-popupTitle",
+                "innerText": this._title
+            }
+            popupChildren.push(createHTMLElement(titleHTML))
+        }
+
+        this._textArea = createHTMLElement({
+            type: 'textarea',
+            id: 'purchaseRequestNoteArea'
+        })
+        popupChildren.push(this._textArea)
+
+        // const messageHTML = {
+        //     "type": "div",
+        //     "class": "util-popupMessage",
+        //     "innerText": this._message
+        // }
+        // popupChildren.push(createHTMLElement(messageHTML))
+
+        const buttonWrapperHTML = {
+            "type": "div",
+            "class": "util-popupButtonWrapper",
+            "children": this._buttons
+        }
+        popupChildren.push(createHTMLElement(buttonWrapperHTML))
+
+        const popupHTML = {
+            "type": "div",
+            "class": "util-popupWrapper",
+            "children": popupChildren
+        }
+        return createHTMLElement(popupHTML)
+        
+    }
+
+    createPopupButtons(buttons){
+        const buttonsArray = []
+        for(const button of buttons){
+            const btn = new Util_Popup_Button(this._UUID, button)
+            buttonsArray.push(btn.HTMLElement)
+        }
+        return buttonsArray
+    }
+}
+
+class NoteButton{
+    constructor(parentPopup, data){
+        this._UUID = createUUID(this)
+        this._parentPopup = parentPopup
+        this._data = data
+        this._HTML = this.createHTML()
+    }
+
+    createHTML(){
+        const HTML = {
+            "UUID": this._UUID,
+            "type": "div",
+            "class": "util-popupButton",
+            "innerText": this._data.text,
+            "click": this._data.click
+        }
+        return createHTMLElement(HTML)
+    }
+
+    get HTMLElement(){
+        return this._HTML
+    }
+
+    get parentPopup(){
+        return this._parentPopup
+    }
+}
